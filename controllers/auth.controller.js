@@ -66,7 +66,7 @@ const googleCallback = async (req, res) => {
     req.session.userProfile = profile; // Store userProfile in session
     userProfileData = profile; // Set userProfileData here
 
-    res.redirect(`http://localhost:5173/home?token=${tokens.access_token}`);
+    res.redirect(`https://neurozen.vercel.app/home?token=${tokens.access_token}`);
   } catch (error) {
     console.error("Authentication error:", error);
     res.status(400).json({
