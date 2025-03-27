@@ -38,16 +38,30 @@ exports.signup = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
   try {
+    const { email, password } = req.body;
+
+    // Check if email and password are provided
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    // Find user by email
     const user = await User.findOne({ email });
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!user || !isMatch) {
+
+    // If user doesn't exist, return error
+    if (!user) {
       return res.status(400).json({ error: "Invalid user credential" });
     }
-    createTokenAndSaveCookie(user._id, res);
-    const token=createTokenAndSaveCookie(user._id, res);
 
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ error: "Invalid user credential" });
+    }
+
+    // Generate token
+    const token = createTokenAndSaveCookie(user._id, res);
     res.status(201).json({
       message: "User logged in successfully",
       user: {
